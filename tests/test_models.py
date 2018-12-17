@@ -2,6 +2,7 @@ from tests import TestCaseBase
 from core import models
 import datetime
 
+
 class Address(models.Model):
     type = models.StringProperty()  # E.g., 'home', 'work'
     street = models.StringProperty()
@@ -11,7 +12,7 @@ class Address(models.Model):
 
 class TestModel(models.Model):
     name = models.StringProperty()
-    title = models.StringProperty()
+    title = models.StringProperty(default='Implicit Title')
     jive = models.StringProperty(repeated=True)
     total = models.StringProperty()
     addresses = models.StructuredProperty(Address, repeated=True)
@@ -26,7 +27,19 @@ def funco():
     pass
 
 
-class SuperTest(TestCaseBase):
+class ModelPropertyTests(TestCaseBase):
+
+    def test_default(self):
+        # Implicitly Setting Title
+        m = TestModel(name='Explicit Name')
+        self.assertEqual(m.name, 'Explicit Name')
+        self.assertEqual(m.title, 'Implicit Title')
+
+        # Explicitly Setting Title
+        m.title = 'Explicit Title'
+        self.assertEqual(m.title, 'Explicit Title')
+
+    '''
     def test_derp(self):
         m = TestModel(title='cheese', name='booger', total='666')
         m.title = 'cheese'
@@ -47,3 +60,4 @@ class SuperTest(TestCaseBase):
         # self.assertEqual(m.is_uncool, False)
         # birthday - datetime.timedelta(hours=0)
         raise Exception(m._properties)
+    '''

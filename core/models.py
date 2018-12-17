@@ -1,7 +1,6 @@
-# Core Model
+# Core Model Class devoid of persistance implementation
 import copy
 import datetime
-
 
 # The Epoch (a zero POSIX timestamp).
 _EPOCH = datetime.datetime.utcfromtimestamp(0)
@@ -18,20 +17,16 @@ datastore_errors = DataStoreErrors
 class Property(object):
     _code_name = None
     _name = None
-    _indexed = True
     _repeated = False
     _required = False
     _default = None
     _choices = None
     _validator = None
-    _verbose_name = None
-    _write_empty_list = False
 
-    _attributes = ['_name', '_indexed', '_repeated', '_required', '_default',
-                   '_choices', '_validator', '_verbose_name',
-                   '_write_empty_list']
+    _attributes = ['_name', '_repeated', '_required', '_default',
+                   '_choices', '_validator']
 
-    def __init__(self, name=None, indexed=None, repeated=None,
+    def __init__(self, name=None, repeated=None,
                  required=None, default=None, choices=None, validator=None,
                  verbose_name=None, write_empty_list=None):
         """Constructor.  For arguments see the module docstring."""
@@ -45,8 +40,6 @@ class Property(object):
                 raise ValueError('Name %r cannot contain period characters' % (name,))
             self._name = name
 
-        if indexed is not None:
-            self._indexed = indexed
         if repeated is not None:
             self._repeated = repeated
         if required is not None:
@@ -54,10 +47,6 @@ class Property(object):
         if default is not None:
             # TODO: Call _validate() on default?
             self._default = default
-        if verbose_name is not None:
-            self._verbose_name = verbose_name
-        if write_empty_list is not None:
-            self._write_empty_list = write_empty_list
         if self._repeated and (self._required or self._default is not None):
             raise ValueError('repeated is incompatible with required or default')
         if choices is not None:
@@ -310,7 +299,6 @@ class TextProperty(Property):
 
 class StringProperty(TextProperty):
     """An indexed Property whose value is a text string of limited length."""
-    _indexed = True
 
 
 class BooleanProperty(Property):
@@ -459,9 +447,6 @@ class StructuredProperty(_StructuredGetForDictMixin):
         if op != '=':
             raise datastore_errors.BadFilterError(
                 'StructuredProperty filter can only use ==')
-        if not self._indexed:
-            raise datastore_errors.BadFilterError(
-                'Cannot query for unindexed StructuredProperty %s' % self._name)
         # Import late to avoid circular imports.
         from .query import ConjunctionNode, PostFilterNode
         from .query import RepeatedStructuredPropertyPredicate
@@ -548,12 +533,6 @@ class StructuredProperty(_StructuredGetForDictMixin):
             else:
                 ok = subprop._has_value(subent, rest[1:])
         return ok
-
-    def _prepare_for_put(self, entity):
-        values = self._get_base_value_unwrapped_as_list(entity)
-        for value in values:
-            if value is not None:
-                value._prepare_for_put()
 
     def _check_property(self, rest=None, require_indexed=True):
         """Override for Property._check_property().
@@ -647,12 +626,6 @@ class DateTimeProperty(Property):
 
     def _now(self):
         return datetime.datetime.utcnow()
-
-    def _prepare_for_put(self, entity):
-        if (self._auto_now or
-                (self._auto_now_add and not self._has_value(entity))):
-            value = self._now()
-            self._store_value(entity, value)
 
     def _db_set_value(self, v, p, value):
         if not isinstance(value, datetime.datetime):
