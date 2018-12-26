@@ -62,5 +62,7 @@ class ModelPropertyTests(TestCaseBase):
         self.assertEqual(m.is_cool, None)
         self.assertEqual(m.is_uncool, True)
         self.assertEqual(m.birthday, now)
+        self.assertEquals(m.addresses, [])
 
         # raise Exception(m._properties)
+        raise Exception(m.to_dict())
