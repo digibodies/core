@@ -19,8 +19,8 @@ class TestModel(models.Model):
     data = models.JsonProperty()
 
     birthday = models.DateTimeProperty()
-    # is_cool = models.BooleanProperty()
-    # is_uncool = models.BooleanProperty()
+    is_cool = models.BooleanProperty()
+    is_uncool = models.BooleanProperty(default=True)
 
 
 def funco():
@@ -39,10 +39,8 @@ class ModelPropertyTests(TestCaseBase):
         m.title = 'Explicit Title'
         self.assertEqual(m.title, 'Explicit Title')
 
-    '''
     def test_derp(self):
         m = TestModel(title='cheese', name='booger', total='666')
-        m.title = 'cheese'
         m.jive = ['a', 's', 'd']
 
         m.addresses = [
@@ -50,14 +48,19 @@ class ModelPropertyTests(TestCaseBase):
             Address(city='Barron')
         ]
         m.data = {'frog': funco}
-        m.birthday = datetime.datetime.now()
 
-        # raise Exception([m.name, m.jive, m.is_cool, m.is_uncool])
-        # raise Exception([m.title, m.jive, m.total])
+        now = datetime.datetime.now()
+        m.birthday = now
+
+        # Test non-property attribute
+        m.benga = 'cornpone'
+
+        self.assertEqual(m.name, 'booger')
+        self.assertEqual(m.total, '666')
         self.assertEqual(m.title, 'cheese')
         self.assertEqual(m.jive, ['a', 's', 'd'])
-        # self.assertEqual(m.is_cool, True)
-        # self.assertEqual(m.is_uncool, False)
-        # birthday - datetime.timedelta(hours=0)
-        raise Exception(m._properties)
-    '''
+        self.assertEqual(m.is_cool, None)
+        self.assertEqual(m.is_uncool, True)
+        self.assertEqual(m.birthday, now)
+
+        # raise Exception(m._properties)

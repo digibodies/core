@@ -1,3 +1,4 @@
+# These may or may not be in use?
 class DateTimeProperty(Property):
     """A Property whose value is a datetime object.
     Note: Unlike Django, auto_now_add can be overridden by setting the
