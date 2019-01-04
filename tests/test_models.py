@@ -65,4 +65,4 @@ class ModelPropertyTests(TestCaseBase):
 
     def test_duck_typing(self):
         self.assertIsInstance(TestModel.name, models.Property)
-        self.assertEqual('is_cool', TestModel.is_cool._name)
+        self.assertEqual('is_cool', TestModel.is_cool.name())
