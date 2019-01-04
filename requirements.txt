@@ -1,10 +1,6 @@
-# These requirements are installed to ./app/external
-
 mock
 nose
 nose-exclude
 rednose
 coverage
 yanc
-PyCrypto==2.6
-PyJWT

@@ -39,7 +39,7 @@ class ModelPropertyTests(TestCaseBase):
         m.title = 'Explicit Title'
         self.assertEqual(m.title, 'Explicit Title')
 
-    def test_derp(self):
+    def test_exhaustive(self):
         m = TestModel(title='cheese', name='booger', total='666')
         m.jive = ['a', 's', 'd']
 
@@ -53,7 +53,7 @@ class ModelPropertyTests(TestCaseBase):
         m.birthday = now
 
         # Test non-property attribute
-        m.benga = 'cornpone'
+        m.something = 'something'
 
         self.assertEqual(m.name, 'booger')
         self.assertEqual(m.total, '666')
@@ -63,4 +63,6 @@ class ModelPropertyTests(TestCaseBase):
         self.assertEqual(m.is_uncool, True)
         self.assertEqual(m.birthday, now)
 
-        # raise Exception(m._properties)
+    def test_duck_typing(self):
+        self.assertIsInstance(TestModel.name, models.Property)
+        self.assertEqual('is_cool', TestModel.is_cool._name)
