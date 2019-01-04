@@ -718,7 +718,29 @@ class TimeProperty(DateTimeProperty):
         return datetime.datetime.utcnow().time()
 
 
+class MetaModel(type):
+  """Metaclass for Model.
+
+  This exists to fix up the properties -- they need to know their name.
+  This is accomplished by calling the class's _fix_properties() method.
+  """
+
+  def __init__(cls, name, bases, classdict):
+    super(MetaModel, cls).__init__(name, bases, classdict)
+    cls._fix_up_properties()
+
+  def __repr__(cls):
+    props = []
+    for _, prop in sorted(cls._properties.iteritems()):
+      props.append('%s=%r' % (prop._code_name, prop))
+    return '%s<%s>' % (cls.__name__, ', '.join(props))
+
 class Model(object):
+
+    __metaclass__ = MetaModel
+    # Class variables updated by _fix_up_properties()
+    _properties = None
+
     id = None
     _has_repeated = False
 
