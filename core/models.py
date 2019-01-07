@@ -731,7 +731,7 @@ class MetaModel(type):
 
   def __repr__(cls):
     props = []
-    for _, prop in sorted(cls._properties.iteritems()):
+    for _, prop in sorted(cls._properties.items()):
       props.append('%s=%r' % (prop._code_name, prop))
     return '%s<%s>' % (cls.__name__, ', '.join(props))
 
@@ -817,7 +817,7 @@ class Model(object):
         Expando overrides this.
         """
         cls = self.__class__
-        for name, value in kwds.iteritems():
+        for name, value in kwds.items():
             prop = getattr(cls, name)  # Raises AttributeError for unknown properties.
 
             if not isinstance(prop, Property):
