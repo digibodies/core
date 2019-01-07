@@ -272,7 +272,7 @@ class TextProperty(Property):
     """An unindexed Property whose value is a text string of unlimited length."""
 
     def _validate(self, value):
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             # Decode from UTF-8 -- if this fails, we can't write it.
             try:
                 value = value.decode('utf-8')
@@ -735,6 +735,7 @@ class MetaModel(type):
       props.append('%s=%r' % (prop._code_name, prop))
     return '%s<%s>' % (cls.__name__, ', '.join(props))
 
+
 class Model(object):
 
     __metaclass__ = MetaModel
@@ -831,7 +832,7 @@ class Model(object):
         """
         # Verify that _get_kind() returns an 8-bit string.
         kind = cls._get_kind()
-        if not isinstance(kind, basestring):
+        if not isinstance(kind, str):
             raise Exception('Class %s defines a _get_kind() method that returns '
                             'a non-string (%r)' % (cls.__name__, kind))
 
